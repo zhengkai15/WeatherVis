@@ -1,7 +1,4 @@
 # WeatherVis
-WeatherVis 是一个用于气象数据可视化的 Python 工具库，支持多种气象图形的绘制。
-
-### 项目简介
 WeatherVis 是一个用于气象数据可视化的 Python 工具库，支持多种气象图形的绘制，包括：
  - 时间序列图
  - 填色地图

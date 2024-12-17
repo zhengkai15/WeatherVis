@@ -1,0 +1,66 @@
+# Python的字节码文件
+__pycache__/
+*.pyc
+*.pyo
+
+# 构建和分发文件
+*.egg-info/
+*.eggs/
+dist/
+build/
+*.tar.gz
+*.whl
+*.rpm
+*.deb
+
+# 配置文件
+*.cfg
+*.ini
+*.log
+
+# 临时文件
+*.bak
+*.swp
+*~
+*.idea/
+.vscode/
+
+# Jupyter notebook文件
+.ipynb_checkpoints/
+
+# pipenv 环境
+Pipfile.lock
+
+# pyenv 环境
+.python-version
+
+# conda 环境
+env.yml
+*.conda
+*.h5
+*.pkl
+
+# 本地 IDE 设置
+.idea/
+.vscode/
+
+# mypy 缓存
+.mypy_cache/
+
+# pytest 临时文件
+.cache/
+
+# 其他敏感的文件
+*.log
+
+# 打包文件
+*.tar.gz
+*.zip
+
+# 依赖包缓存
+*.egg
+*.whl
+
+# 忽略 Python 虚拟环境文件夹
+venv/
+env/
