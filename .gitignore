@@ -64,3 +64,10 @@ env.yml
 # 忽略 Python 虚拟环境文件夹
 venv/
 env/
+
+# shp文件
+*.cpg
+*.dbf
+*.prj
+*.shp
+*.shx
