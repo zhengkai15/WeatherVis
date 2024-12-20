@@ -38,6 +38,8 @@ WeatherVis 是一个用于气象数据可视化的 Python 工具库，支持多�
 ### 安装依赖
 运行以下命令安装所需依赖：
 ```bash
+# 配置shp文件
+git clone https://github.com/GaryBikini/ChinaAdminDivisonSHP.git
 pip install xarray matplotlib cartopy numpy pandas
 ```
 
