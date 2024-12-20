@@ -315,7 +315,7 @@ def create_gif_from_images(image_paths, gif_output_path, duration=1):
     
 import xarray as xr
 @time_decorator
-def plot_(ds: xr.DataArray, save_path: str = "./tmp.png", levels=None, geo_path="", var="tp", title=None):
+def plot_lambert(ds: xr.DataArray, save_path: str = "./tmp.png", levels=None, geo_path="", var="tp", title=None):
     """
     Plots a contour map of the given dataset `ds` and saves it to `fig_path`.
 
