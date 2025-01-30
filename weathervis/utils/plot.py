@@ -447,3 +447,138 @@ def plot_lambert(ds: xr.DataArray, save_path: str = "./tmp.png", levels=None, ge
     else:
         return ax
 
+
+def plot_china_tp(ds, save_path, level, geo_path):
+    # 定义级别和颜色
+    levels = [0] + list(level.values())
+    colors = ['white', 'blue', 'yellow', 'orange', 'red']
+    cmap = ListedColormap(colors)
+    norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+    
+    # 创建地图投影
+    proj = ccrs.PlateCarree()
+
+    # 创建图形并添加地图
+    plt.figure(figsize=(10, 6), dpi=100)
+    ax = plt.axes(projection=proj)
+
+    # 绘制等高线图
+    contour = ds.plot.contourf(ax=ax, levels=levels, cmap=cmap, norm=norm, add_colorbar=False)
+
+    # 添加地图特征
+    ax.add_feature(cfeature.COASTLINE)
+    # ax.add_feature(cfeature.BORDERS)
+    ax.add_feature(cfeature.LAND, facecolor='white')
+    ax.add_feature(cfeature.OCEAN, facecolor='white')
+    # 添加经纬网格线
+    gridlines = ax.gridlines(draw_labels=True, crs=proj, linestyle='--')
+    gridlines.top_labels = False   # 不显示顶部标签
+    gridlines.right_labels = False # 不显示右侧标签
+    gridlines.left_labels = True   # 显示左侧标签
+    gridlines.bottom_labels = True # 显示底部标签
+    gridlines.xlocator = plt.MultipleLocator(10)  # 经度线间隔 5 度
+    gridlines.ylocator = plt.MultipleLocator(10)  # 纬度线间隔 5 度
+    gridlines.xlabel_style = {'size': 10, 'color': 'gray'}
+    gridlines.ylabel_style = {'size': 10, 'color': 'gray'}
+    # 添加颜色条
+    posn = ax.get_position()
+
+    # 设置颜色条的位置和大小
+    cax = plt.axes([posn.x1+0.05, posn.y0, 0.01, posn.height])  # 颜色条放在图的右边，并和图像等高
+    cbar = plt.colorbar(contour, ax=ax, orientation='vertical', cax=cax, extend='neither')
+    # cbar.set_label('')  # 添加颜色条标签
+
+    # 设置标题和标签
+    ax.set_title('Precipitation')
+    ax.set_xlabel('Longitude')
+    ax.set_ylabel('Latitude')
+    ax = add_provence(ax, geo_path)
+    ax.set_extent([70, 140, 15, 55], crs=ccrs.PlateCarree())
+    plt.savefig(save_path)
+    return 
+
+
+def plot_efi_sot(EFI, SOT, zone=[60, 160, 20, 75], chan="TP", save_results=False, save_path='./', init_time="",time="",freq="",source=""):
+    """Plot EFI and SOT maps for precipitation over China
+    
+    Args:
+        EFI (xarray.DataArray): Extreme Forecast Index data
+        SOT (xarray.DataArray): Shift of Tails data
+        zone (list): Map extent [lon_min, lon_max, lat_min, lat_max]
+    """
+    # Custom colormap (white -> yellow -> red)
+    custom_cmap = LinearSegmentedColormap.from_list("brown-green", ["white", "yellow", "red"])
+
+    # Create figure
+    fig, ax = plt.subplots(
+        figsize=(12, 8),
+        subplot_kw={"projection": ccrs.PlateCarree()}
+    )
+    levels = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    label_dict = {'tp':"Precipitation",
+                  'ws10m':"wind speed",}
+
+    # Plot EFI
+    contour = EFI.to_array().isel(variable=0).sel(channel=chan, time=time,init_time=init_time).plot.contourf(
+        ax=ax,
+        cmap=custom_cmap,
+        levels=levels,
+        add_colorbar=True,
+        cbar_kwargs={
+            # "label": label_dict[chan],
+            "label": "",
+            "shrink": 0.7,
+            "aspect": 30,
+            "pad": 0.02
+        },
+        transform=ccrs.PlateCarree()
+    )
+
+    # # Plot SOT contours
+    # contour = SOT.to_array().isel(variable=0).sel(channel=chan, time=time,init_time=init_time).plot.contour(
+    #     ax=ax,
+    #     linewidths=0.0,
+    #     transform=ccrs.PlateCarree()
+    # )
+
+    # # Add contour labels
+    # ax.clabel(
+    #     contour,
+    #     inline=True,
+    #     fontsize=10,
+    #     fmt="%.1f"
+    # )
+
+    # Add map features
+    # ax.add_feature(cfeature.LAND, facecolor="#FFFFCC")
+    # ax.add_feature(cfeature.BORDERS, linestyle="--", linewidth=0.8)
+    # ax.add_feature(cfeature.COASTLINE, linewidth=0.8)
+    
+    # 添加经纬网格线
+    gridlines = ax.gridlines(draw_labels=True, crs=ccrs.PlateCarree(), linestyle='--')
+    gridlines.top_labels = False   # 不显示顶部标签
+    gridlines.right_labels = False # 不显示右侧标签
+    gridlines.left_labels = True   # 显示左侧标签
+    gridlines.bottom_labels = True # 显示底部标签
+    gridlines.xlocator = plt.MultipleLocator(10)  # 经度线间隔 5 度
+    gridlines.ylocator = plt.MultipleLocator(10)  # 纬度线间隔 5 度
+    gridlines.xlabel_style = {'size': 10, 'color': 'gray'}
+    gridlines.ylabel_style = {'size': 10, 'color': 'gray'}
+
+    # Set map extent
+    ax.set_extent(zone)
+    ax.set_title(f"Extreme Forecast Index: {label_dict[chan]}", fontsize=14)
+    ax = add_provence(ax, "/cpfs01/projects-HDD/cfff-4a8d9af84f66_HDD/public/zhengkai/data/DEM/china-geospatial-data-UTF8/CN-border-La.gmt")
+    
+    shpfile_path = "/cpfs01/projects-HDD/cfff-4a8d9af84f66_HDD/public/zhengkai/zhengkai_dev/WeatherVis/ChinaAdminDivisonSHP/1. Country/country.shp"
+    # shapefile.Reader(shpfile)[0].record :['100000', '中华人民共和国']
+    
+    shp2clip(contour, ax, shpfile=shpfile_path, proj = ccrs.PlateCarree(), clabel = None, vcplot = False)
+    if save_results:
+        save_path_final = os.path.join(save_path, f"{init_time.strftime('%Y%m%d%H')}", freq, source, f"{chan}_efi_sot_map_{time.strftime('%Y%m%d-%H')}.png")
+        os.makedirs(os.path.dirname(save_path_final), exist_ok=True)
+        plt.savefig(save_path_final, dpi=300)
+        plt.close()
+        return 
+    else:
+        return fig, ax
