@@ -582,3 +582,54 @@ def plot_efi_sot(EFI, SOT, zone=[60, 160, 20, 75], chan="TP", save_results=False
         return 
     else:
         return fig, ax
+    
+    
+def plot_wind_barb(data, rotation=0):
+    # 风数据处理
+    wind_speed = data['ens_ws10m_mean'].values.reshape(-1)
+    wind_speed_ref = np.sqrt(data['ens_u10m'].values.reshape(-1) **2 + data['ens_v10m'].values.reshape(-1)**2)
+    wind_ratio = wind_speed/wind_speed_ref
+
+    wind_direction = data['ens_wd10m'].values.reshape(-1)
+
+    u = data['ens_u10m'].values.reshape(-1)*wind_ratio
+    v = data['ens_v10m'].values.reshape(-1)*wind_ratio
+    u = [u_i if idx % 5 == 0 else np.nan for idx, u_i in enumerate(u)]
+    v = [v_i if idx % 5 == 0 else np.nan for idx, v_i in enumerate(v)]
+    wind_speed = [ws_i if idx % 5 == 0 else np.nan for idx, ws_i in enumerate(wind_speed)]
+
+    # 定义x轴时间格式
+    stick_ = []
+    stick_lab = []
+    for num, itime in enumerate(data['timestamp']):
+        if itime.hour % 6 == 0 and itime.hour % 24 != 0:
+            stick_.append(num)
+            stick_lab.append(itime.strftime('%H'))
+        elif itime.hour % 24 == 0:
+            stick_.append(num)
+            stick_lab.append(itime.strftime('%H\n%Y/%m/%d'))
+    # 绘图
+    fig, ax = plt.figure(figsize=(12, 2))
+    ax.vlines(data.time[data['time'].apply(lambda x: pd.to_datetime(x).hour) % 12 == 0], 0, 9, linestyles='dashed',
+                 lw=0.2, color='k')
+    ax.set_ylabel('风速(m/s)')
+    ax.set_xticks(data.time[data['time'].apply(lambda x: pd.to_datetime(x).hour) % 6 == 0])
+    ax.set_xticklabels(stick_lab)
+    ax.set_yticklabels([])
+
+    # 定义风羽色卡
+    cmap = cm.jet
+    boundaries = np.linspace(np.floor(np.nanmin(wind_speed)), np.ceil(np.nanmax(wind_speed)), 9).round(1)
+    norm = BoundaryNorm(boundaries, cmap.N)
+    sc = ax.barbs(data.time, 4, u, v, wind_speed,
+                     barb_increments=dict(half=2, full=4, flag=20), cmap=cmap, norm=norm)  # seismic
+    
+    # 定义色卡位置
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="1%", pad=0)  # 设置 colorbar 大小和间距
+    cbar = fig.colorbar(sc, cax=cax, orientation='vertical')
+    
+    # 添加竖线
+    ax.vlines(data.time[data['time'].apply(lambda x: pd.to_datetime(x).hour) % 12 == 0], 0, 100, linestyles='dashed',
+               lw=0.2, color='k')
+    return
