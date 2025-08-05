@@ -19,6 +19,10 @@ WeatherVis 是一个用于气象数据可视化的 Python 工具库，支持多�
  - 支持多变量对比绘制。
  - 可自定义线型、颜色、标记等样式。
  - 添加趋势线、显著标记和时间区间填充等功能。
+ - 样例
+  - 时间序列 
+  - <img width="640" height="199" alt="image" src="https://github.com/user-attachments/assets/2770d659-6849-4678-bd48-54b22a160466" /> 
+
 
 2. 填色地图（Filled Contour Map）
  - 功能描述：展示气象变量（温度、降水、湿度等）的空间分布。
@@ -26,6 +30,9 @@ WeatherVis 是一个用于气象数据可视化的 Python 工具库，支持多�
  - 支持自定义色卡（如降水量：褐色到绿色）。
  - 可叠加地理信息（海岸线、行政边界、河流等）。
  - 支持不同区域（子域）数据可视化，灵活设置经纬度范围。
+ - 样例
+  - <img width="640" height="352" alt="image" src="https://github.com/user-attachments/assets/a6e57409-19e8-443e-95c1-b6bce227c532" />
+  - <img width="640" height="352" alt="image" src="https://github.com/user-attachments/assets/adaba900-ed7d-4de2-b57b-6de49ff7a529" />
 
 3. 风场填色图（Wind Field Coloring）
  - 功能描述：展示风场数据的空间分布，包括风向和风速。
@@ -54,14 +61,6 @@ pip install xarray matplotlib cartopy numpy pandas
 ### 使用说明
  - 支持格式：NetCDF (.nc)、CSV、GRIB 等标准气象数据格式。
  - 示例数据：建议数据包含时间、经纬度及对应的变量（如 temperature、precipitation、wind_u 和 wind_v 等）。
-
-### example
- - 时间序列 
-  - <img width="640" height="199" alt="image" src="https://github.com/user-attachments/assets/2770d659-6849-4678-bd48-54b22a160466" /> 
- - 地图
-  - <img width="640" height="352" alt="image" src="https://github.com/user-attachments/assets/a6e57409-19e8-443e-95c1-b6bce227c532" />
-  - <img width="640" height="352" alt="image" src="https://github.com/user-attachments/assets/adaba900-ed7d-4de2-b57b-6de49ff7a529" />
-
 
 ### 贡献指南
  - 提交 Issue 提出改进建议或发现的 Bug。
